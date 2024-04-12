@@ -1,9 +1,10 @@
 
-package soulcasters;
+package soulcasters.server.game;
 
 public class GameController implements Runnable {
 
     private boolean running = true;
+    private EntityHandler entityHandler = new EntityHandler();
 
     public void run() {
         final int FPS = 60;
@@ -37,7 +38,7 @@ public class GameController implements Runnable {
     }
 
     private void update() {
-        
+        entityHandler.update();
     }
 
     private void render() {
