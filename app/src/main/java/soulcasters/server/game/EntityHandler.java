@@ -7,10 +7,12 @@ import soulcasters.server.game.entity.Entity;
 public class EntityHandler {
     
     private ArrayList<Entity> entityList;
+    private ArrayList<Entity> removalQueue;
     private int nextId;
 
     public EntityHandler() {
         entityList = new ArrayList<>();
+        removalQueue = new ArrayList<>();
         nextId = 0;
     }
 
@@ -21,7 +23,7 @@ public class EntityHandler {
     }
 
     public void removeEntity(Entity entity) {
-        entityList.remove(entity);
+        removalQueue.add(entity);
     }
 
     public Entity getEntity(int index) {
@@ -44,5 +46,8 @@ public class EntityHandler {
         for (Entity entity : entityList) {
             entity.update();
         }
+
+        entityList.removeAll(removalQueue);
+        removalQueue.clear();
     }
 }

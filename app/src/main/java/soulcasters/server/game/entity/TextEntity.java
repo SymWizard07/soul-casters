@@ -7,6 +7,8 @@ import soulcasters.server.game.EntityHandler;
 public class TextEntity extends Entity {
 
     private int visibleTo;
+    private int lifetime;
+    private long startTime;
 
     /**
      * Creates a text entity that one or both players may see.
@@ -25,10 +27,12 @@ public class TextEntity extends Entity {
         options = new String[][]{
             {"text", text},
             {"size", "" + size},
-            {"color", "" + color.getRGB()},
-            {"lifetime", "" + lifetime}
+            {"color", "" + color.getRGB()}
         };
         this.visibleTo = visibleTo;
+        this.lifetime = lifetime;
+
+        startTime = System.currentTimeMillis();
     }
 
     public int getVisibility() {
@@ -42,7 +46,9 @@ public class TextEntity extends Entity {
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - startTime >= lifetime) {
+            remove();
+        }
     }
 }

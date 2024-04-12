@@ -10,6 +10,7 @@ public abstract class Entity {
     protected int id;
     // Each option has a string identifier, and a text description that is displayed to the user.
     protected String[][] options;
+    protected boolean updateEntity;
 
     public Entity(EntityHandler entityHandler, int x, int y) {
         this.entityHandler = entityHandler;
@@ -17,6 +18,7 @@ public abstract class Entity {
         this.y = y;
         this.width = 0;
         this.height = 0;
+        updateEntity = true;
     }
 
     public void assignId(int id) {
@@ -42,6 +44,14 @@ public abstract class Entity {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public String[][] getOptions() {
+        return options;
+    }
+
+    public void remove() {
+        entityHandler.removeEntity(this);
     }
 
     public abstract void optionAction(String selectedOption);

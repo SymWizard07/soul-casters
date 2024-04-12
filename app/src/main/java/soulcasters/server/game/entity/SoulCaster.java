@@ -12,8 +12,8 @@ public class SoulCaster extends OwnedEntity {
     public SoulCaster(EntityHandler entityHandler, int x, int y, int ownerId) {
         super(entityHandler, x, y, ownerId);
         options = new String[][]{
-            {"workerCasts", "SoulCast a Worker"},
-            {"fighterCasts", "SoulCast a Fighter"},
+            {"workerCasts", "SoulCast Worker"},
+            {"fighterCasts", "SoulCast Fighter"},
             {"toggleRepeat", "Toggle Repeat Cast\nAttempts to continuously cast the next chosen unit.\nOnly works when you have the resources!"}
         };
     }
@@ -32,7 +32,11 @@ public class SoulCaster extends OwnedEntity {
             break;
             case "fighterCasts":
             options = new String[][]{
-                {""}
+                {"scout", "Cast Scout - 5 SP"},
+                {"defender", "Cast Defender - 20 SP"},
+                {"knight", "Cast Knight - 15 SP"},
+                {"breacher", "Cast Breacher - 15 SP"},
+                {"medic", "Cast Medic - 10 SP"}
             };
             case "toggleRepeat":
             if (!repeatCast) {
@@ -43,14 +47,21 @@ public class SoulCaster extends OwnedEntity {
                 entityHandler.addEntity(new TextEntity(entityHandler, x, y, "Repeat Off", 8, new Color(Constants.COLOR_STATUS_FAILURE), ownerId, 750));
                 repeatCast = true;
             }
+            break;
             case "lumberjack":
             entityHandler.addEntity(new Lumberjack(entityHandler, x, y, ownerId));
             break;
-
-        
-            default:
-                break;
         }
+    }
+
+    public String[][] getOptions() {
+        options = new String[][]{
+            {"workerCasts", "SoulCast Worker"},
+            {"fighterCasts", "SoulCast Fighter"},
+            {"toggleRepeat", "Toggle Repeat Cast\nAttempts to continuously cast the next chosen unit.\nOnly works when you have the resources!"}
+        };
+
+        return options;
     }
 
     @Override
