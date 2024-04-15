@@ -6,6 +6,9 @@ public class GameController implements Runnable {
     private boolean running = true;
     private EntityHandler entityHandler = new EntityHandler();
 
+    private PlayerData p1 = new PlayerData(0, 1);
+    private PlayerData p2 = new PlayerData(1, 2);
+
     public void run() {
         final int FPS = 60;
         final long frameTime = 1000 / FPS;
