@@ -6,6 +6,9 @@ public class Lumberjack extends OwnedEntity {
 
     public Lumberjack(EntityHandler entityHandler, int x, int y, int ownerId) {
         super(entityHandler, x, y, ownerId);
+        width = 64;
+        height = 64;
+        type = "lumberjack";
         //TODO Auto-generated constructor stub
     }
 

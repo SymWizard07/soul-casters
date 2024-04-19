@@ -1,6 +1,7 @@
 package soulcasters.server.game.entity;
 
 import soulcasters.server.game.EntityHandler;
+import soulcasters.shared.EntityData;
 
 public abstract class Entity {
 
@@ -11,6 +12,7 @@ public abstract class Entity {
     // Each option has a string identifier, and a text description that is displayed to the user.
     protected String[][] options;
     protected boolean updateEntity;
+    protected String type;
 
     public Entity(EntityHandler entityHandler, int x, int y) {
         this.entityHandler = entityHandler;
@@ -47,11 +49,19 @@ public abstract class Entity {
     }
 
     public String[][] getOptions() {
-        return options;
+        return options.clone();
+    }
+
+    public boolean isWaiting() {
+        return updateEntity;
     }
 
     public void remove() {
         entityHandler.removeEntity(this);
+    }
+
+    public EntityData convertToEntityData() {
+        return new EntityData(id, x, y, width, height, getOptions(), type);
     }
 
     public abstract void optionAction(String selectedOption);
