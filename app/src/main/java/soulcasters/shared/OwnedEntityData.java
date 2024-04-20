@@ -1,6 +1,4 @@
-package soulcasters.server.game;
-
-import soulcasters.shared.EntityData;
+package soulcasters.shared;
 
 public class OwnedEntityData extends EntityData {
     

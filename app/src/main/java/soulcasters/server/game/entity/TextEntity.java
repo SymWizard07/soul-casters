@@ -22,7 +22,7 @@ public class TextEntity extends Entity {
      * @param visibleTo An int signifying the id of the players the text is visible to. 0 for player 1, 1 for player 2, -1 for both players.
      * @param lifetime Total time in milliseconds text is on screen before disappearing. -1 to last forever, or until the entity is removed.
      */
-    public TextEntity(EntityHandler entityHandler, int x, int y, String text, int size, Color color, int visibleTo, int lifetime) {
+    public TextEntity(EntityHandler entityHandler, double x, double y, String text, int size, Color color, int visibleTo, int lifetime) {
         super(entityHandler, x, y);
         options = new String[][]{
             {"text", text},
@@ -45,7 +45,7 @@ public class TextEntity extends Entity {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTime) {
         long currentTime = System.currentTimeMillis();
         if (currentTime - startTime >= lifetime) {
             remove();

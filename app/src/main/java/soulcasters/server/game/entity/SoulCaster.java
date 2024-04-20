@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import soulcasters.Constants;
 import soulcasters.server.game.EntityHandler;
+import soulcasters.server.game.entity.units.Lumberjack;
 
 public class SoulCaster extends OwnedEntity {
 
@@ -65,7 +66,7 @@ public class SoulCaster extends OwnedEntity {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTime) {
         
     }
     

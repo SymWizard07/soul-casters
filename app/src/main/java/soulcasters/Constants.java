@@ -12,6 +12,10 @@ public final class Constants {
     public static final int COLOR_STATUS_SUCCESS = new Color(24, 173, 42).getRGB();
     public static final int COLOR_STATUS_FAILURE = new Color(173, 12, 12).getRGB();
 
+    public static final double ASPECT_RATIO = 320.0 / 200.0;
+    public static final int GAME_WIDTH = 320;
+    public static final int GAME_HEIGHT = 200;
+
     public static final Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
         // Create a new buffered image with the target dimensions and the type that supports transparency
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);

@@ -3,8 +3,12 @@ package soulcasters.client.game;
 
 import java.awt.Graphics2D;
 
+import soulcasters.Constants;
 import soulcasters.client.GamePanelControl;
 import soulcasters.shared.CombinedEntityData;
+import javax.swing.*;
+
+import java.awt.*;
 
 public class GameController implements Runnable {
 
@@ -40,7 +44,8 @@ public class GameController implements Runnable {
             requestNow = System.currentTimeMillis();
             requestTime += requestNow - requestLast;
             requestLast = requestNow;
-            if (requestTime > 1000) {
+            // EntityData requested every 40 ms
+            if (requestTime > 40) {
                 gcp.requestEntityData();
                 requestTime = 0;
             }
@@ -60,7 +65,42 @@ public class GameController implements Runnable {
     }
 
     public void render(Graphics2D g) {
-        entityHandler.render(g);
+        Rectangle clipBounds = g.getClipBounds();
+
+        // Calculate the current aspect ratio
+        double currentAspectRatio = (double) clipBounds.width / clipBounds.height;
+
+        // Desired aspect ratio is 16:10, which is 1.6
+        double desiredAspectRatio = Constants.ASPECT_RATIO;
+
+        int newWidth, newHeight;
+        int x, y;
+
+        if (currentAspectRatio > desiredAspectRatio) {
+            // Too wide
+            newHeight = clipBounds.height;
+            newWidth = (int) (newHeight * desiredAspectRatio);
+            x = (clipBounds.width - newWidth) / 2;
+            y = 0;
+        } else {
+            // Too tall
+            newWidth = clipBounds.width;
+            newHeight = (int) (newWidth / desiredAspectRatio);
+            x = 0;
+            y = (clipBounds.height - newHeight) / 2;
+        }
+
+        // Fill the background with black bars
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, clipBounds.width, y); // Top bar
+        g.fillRect(0, y + newHeight, clipBounds.width, clipBounds.height - (y + newHeight)); // Bottom bar
+        g.fillRect(0, 0, x, clipBounds.height); // Left bar
+        g.fillRect(x + newWidth, 0, clipBounds.width - (x + newWidth), clipBounds.height); // Right bar
+
+        // Now draw the actual content in the adjusted area
+        g.setColor(new Color(101, 197, 64));
+        g.fillRect(x, y, newWidth, newHeight);
+        entityHandler.render(g, x, y, (double)(newWidth) / Constants.GAME_WIDTH);
     }
 
     public void addOptionsPanel(OptionsDisplay optionsPanel) {

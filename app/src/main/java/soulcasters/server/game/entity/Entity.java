@@ -6,7 +6,7 @@ import soulcasters.shared.EntityData;
 public abstract class Entity {
 
     protected EntityHandler entityHandler;
-    protected int x, y;
+    protected double x, y;
     protected int width, height;
     protected int id;
     // Each option has a string identifier, and a text description that is displayed to the user.
@@ -14,7 +14,7 @@ public abstract class Entity {
     protected boolean updateEntity;
     protected String type;
 
-    public Entity(EntityHandler entityHandler, int x, int y) {
+    public Entity(EntityHandler entityHandler, double x, double y) {
         this.entityHandler = entityHandler;
         this.x = x;
         this.y = y;
@@ -27,11 +27,11 @@ public abstract class Entity {
         this.id = id;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -43,7 +43,7 @@ public abstract class Entity {
         return height;
     }
 
-    public void setPosition(int x, int y) {
+    public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -56,15 +56,19 @@ public abstract class Entity {
         return updateEntity;
     }
 
+    public void stopWaiting() {
+        updateEntity = false;
+    }
+
     public void remove() {
         entityHandler.removeEntity(this);
     }
 
     public EntityData convertToEntityData() {
-        return new EntityData(id, x, y, width, height, getOptions(), type);
+        return new EntityData(id, (int)x, (int)y, width, height, getOptions(), type);
     }
 
     public abstract void optionAction(String selectedOption);
 
-    public abstract void update();
+    public abstract void update(double deltaTime);
 }

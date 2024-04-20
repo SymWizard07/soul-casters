@@ -3,6 +3,8 @@ package soulcasters.client.game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
+
 import javax.swing.ImageIcon;
 
 import soulcasters.Constants;
@@ -16,7 +18,7 @@ public class EntityDisplay {
     private int width, height;
     private OptionsDisplay options;
     private boolean isClicked;
-    private Image sprite;
+    private Image sprite, resizedSprite;
 
     public EntityDisplay(EntityHandler entityHandler, int id, String type, int x, int y, int width, int height, String[][] options) {
         this.entityHandler = entityHandler;
@@ -39,8 +41,6 @@ public class EntityDisplay {
             imgURL = getClass().getClassLoader().getResource("sprites/unknown.png");
         }
         sprite = new ImageIcon(imgURL).getImage();
-
-        sprite = Constants.resizeImage(sprite, width, height);
     }
 
     public void checkClick(int mouseX, int mouseY) {
@@ -90,12 +90,11 @@ public class EntityDisplay {
         this.height = height;
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics2D g, int offsetX, int offsetY, double scale) {
 
         if (sprite != null) {
-            g.drawImage(sprite, x, y, null);
+            resizedSprite = Constants.resizeImage(sprite, (int)(width * scale), (int)(width * scale));
+            g.drawImage(resizedSprite, (int)(x * scale) + offsetX, (int)(y * scale) + offsetY, null);
         }
-        g.setColor(Color.RED);
-        g.drawRect(100, 100, 10, 10);
     }
 }

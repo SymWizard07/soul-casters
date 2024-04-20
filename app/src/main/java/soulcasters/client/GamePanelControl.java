@@ -47,7 +47,6 @@ public class GamePanelControl extends MouseAdapter {
         try {
             if (client.inGame) {
                 client.sendToServer(new DataRequest(sessionToken, "reqEntityData"));
-                System.out.println("request sent");
             }
         } catch (IOException e) {
             System.out.println("Could not request entity data");
@@ -56,7 +55,6 @@ public class GamePanelControl extends MouseAdapter {
     }
 
     public void recieveCombinedEntityData(CombinedEntityData combinedEntityData) {
-        System.out.println("Entity data recieved");
         gc.updateEntityData(combinedEntityData);
     }
 

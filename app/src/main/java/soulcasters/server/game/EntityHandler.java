@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import soulcasters.server.game.entity.Entity;
 import soulcasters.shared.EntityData;
+import soulcasters.shared.OwnedEntityData;
 
 public class EntityHandler {
     
@@ -17,6 +18,7 @@ public class EntityHandler {
         removalQueue = new ArrayList<>();
         nextId = 0;
         entityDataQueues = new ArrayList<>();
+        entityDataQueues.add(new ArrayList<>());
     }
 
     public void addEntity(Entity entity) {
@@ -45,11 +47,12 @@ public class EntityHandler {
         return entityResults;
     }
 
-    public void update() {
-        for (Entity entity : entityList) {
-            entity.update();
-            if (entity.isWaiting()) {
-                queueEntityData(entity.convertToEntityData());
+    public void update(double deltaTime) {
+        for (int i = 0; i < entityList.size(); i++) {
+            entityList.get(i).update(deltaTime);
+            if (entityList.get(i).isWaiting()) {
+                queueEntityData(entityList.get(i).convertToEntityData());
+                entityList.get(i).stopWaiting();
             }
         }
 
@@ -59,10 +62,30 @@ public class EntityHandler {
 
     public void queueEntityData(EntityData entityData) {
         if (entityData instanceof OwnedEntityData) {
-            entityDataQueues.get(((OwnedEntityData)(entityData)).ownerId + 1).add(entityData);
+            OwnedEntityData ownedData = (OwnedEntityData) entityData;
+            while (entityDataQueues.size() <= ownedData.ownerId + 1) {
+                entityDataQueues.add(new ArrayList<>());
+            }
+            ArrayList<EntityData> ownedDataQueue = entityDataQueues.get(ownedData.ownerId + 1);
+            for (int i = 0; i < ownedDataQueue.size(); i++) {
+                if (ownedDataQueue.get(i).id == ownedData.id) {
+                    ownedDataQueue.set(i, entityData);
+                    return;
+                }
+            }
+            ownedDataQueue.add(entityData);
+            entityDataQueues.set(ownedData.ownerId + 1, ownedDataQueue);
         }
         else {
-            entityDataQueues.get(0).add(entityData);
+            ArrayList<EntityData> globalDataQueue = entityDataQueues.get(0);
+            for (int i = 0; i < globalDataQueue.size(); i++) {
+                if (globalDataQueue.get(i).id == entityData.id) {
+                    globalDataQueue.set(i, entityData);
+                    return;
+                }
+            }
+            globalDataQueue.add(entityData);
+            entityDataQueues.set(0, globalDataQueue);
         }
     }
 

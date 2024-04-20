@@ -103,7 +103,10 @@ public class GameServer extends AbstractServer {
           // Check request type, retrieve available data for client
           if (dataReq.request.equals("reqEntityData")) {
             CombinedEntityData ced = sessionToken.game.retrieveEntityData(arg1.getId());
-            System.out.println(ced);
+            //ArrayList<EntityData> test = new ArrayList<>();
+            //test.add(new EntityData(0, 0, 0, 32, 32, null, "lumberjack"));
+            //ced = new CombinedEntityData(test, null);
+            System.out.println(ced.interactableEntities.get(0).x);
             try {
               arg1.sendToClient(ced);
             } catch (IOException e) {
@@ -141,6 +144,7 @@ public class GameServer extends AbstractServer {
           GameController newGame = new GameController(this);
           concurrentGames.add(newGame);
           newGame.addPlayer(arg1.getId(), data.getUsername());
+          newGame.start();
           newToken = createSessionToken(arg1.getId(), newGame);
         }
       } else {

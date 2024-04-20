@@ -4,7 +4,7 @@ package soulcasters.server.game;
 import java.util.ArrayList;
 
 import soulcasters.server.GameServer;
-import soulcasters.server.game.entity.Lumberjack;
+import soulcasters.server.game.entity.units.Lumberjack;
 import soulcasters.shared.CombinedEntityData;
 import soulcasters.shared.EntityData;
 
@@ -18,7 +18,7 @@ public class GameController implements Runnable {
 
     public GameController(GameServer gs) {
         this.gs = gs;
-        entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 1));
+        entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 0));
     }
 
     public int getPlayerCount() {
@@ -78,28 +78,26 @@ public class GameController implements Runnable {
     }
 
     public void run() {
-        final int FPS = 60;
+        final int FPS = 30;
         final long frameTime = 1000 / FPS;
-
+    
         long lastTime = System.nanoTime();
         long now;
-        long updateTime;
-        long wait;
-
+        double deltaTime;
+    
         while (running) {
             now = System.nanoTime();
-            updateTime = now - lastTime;
+            deltaTime = (now - lastTime) / 1000000000.0; // Convert nanoseconds to seconds
             lastTime = now;
-
-            update(); // Update game state
-            render(); // Render to the screen
-
-            wait = (lastTime - System.nanoTime() + frameTime) / 1000000;
-
+    
+            update(deltaTime);
+    
+            long wait = (lastTime - System.nanoTime() + frameTime) / 1000000;
+    
             if (wait < 0) {
                 wait = 5;
             }
-
+    
             try {
                 Thread.sleep(wait);
             } catch (InterruptedException e) {
@@ -108,12 +106,8 @@ public class GameController implements Runnable {
         }
     }
 
-    private void update() {
-        entityHandler.update();
-    }
-
-    private void render() {
-
+    private void update(double deltaTime) {
+        entityHandler.update(deltaTime);
     }
 
     public void start() {

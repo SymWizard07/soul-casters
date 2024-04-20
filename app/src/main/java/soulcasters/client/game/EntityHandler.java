@@ -2,6 +2,9 @@ package soulcasters.client.game;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.*;
+
+import java.awt.Rectangle;
 
 import soulcasters.shared.CombinedEntityData;
 import soulcasters.shared.EntityData;
@@ -18,8 +21,13 @@ public class EntityHandler {
     public void updateList(CombinedEntityData combinedEntityData) {
         ArrayList<EntityDisplay> removalList = new ArrayList<>();
         boolean entityExists;
+
+        ArrayList<EntityData> combinedList = new ArrayList<>();
+        combinedList.addAll(combinedEntityData.visibleEntities);
+        combinedList.addAll(combinedEntityData.interactableEntities);
+
         try {
-            for (EntityData entityData : combinedEntityData.visibleEntities) {
+            for (EntityData entityData : combinedList) {
                 entityExists = false;
                 for (EntityDisplay entityDisplay : entityList) {
                     if (entityData.id == entityDisplay.getId()) {
@@ -41,7 +49,7 @@ public class EntityHandler {
                 }
             }
         } catch (Exception e) {
-
+            System.out.println(combinedEntityData.visibleEntities);
         }
     }
 
@@ -63,9 +71,9 @@ public class EntityHandler {
         gc.sendSelectedOption(entityId, optionIndex);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics2D g, int offsetX, int offsetY, double scale) {
         for (EntityDisplay entityDisplay : entityList) {
-            entityDisplay.render(g);
+            entityDisplay.render(g, offsetX, offsetY, scale);
         }
     }
 }

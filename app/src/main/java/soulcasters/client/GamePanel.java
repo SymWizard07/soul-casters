@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+import java.awt.Color;
 
 public class GamePanel extends JPanel {
 
