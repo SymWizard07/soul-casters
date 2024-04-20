@@ -1,48 +1,35 @@
 DROP TABLE players CASCADE CONSTRAINTS;
-DROP TABLE auth_sessions CASCADE CONSTRAINTS;
 DROP TABLE game_sessions CASCADE CONSTRAINTS;
 DROP TABLE units CASCADE CONSTRAINTS;
-DROP TABLE buildings CASCADE CONSTRAINTS;
-DROP TABLE combat_logs CASCADE CONSTRAINTS;
-DROP TABLE game_options CASCADE CONSTRAINTS;
-DROP TABLE resources CASCADE CONSTRAINTS;
-DROP TABLE player_inventories CASCADE CONSTRAINTS;
-DROP TABLE player_game_options CASCADE CONSTRAINTS;
 
--- Players Table
+-- Players Table (combined player info and authentication details)
 CREATE TABLE players (
     player_id NUMBER PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     score NUMBER DEFAULT 0,
+    games_won NUMBER DEFAULT 0,
+    games_lost NUMBER DEFAULT 0,
     resources NUMBER DEFAULT 0,
-    win_count NUMBER DEFAULT 0,
-    loss_count NUMBER DEFAULT 0,
+    session_token CHAR(36) NOT NULL UNIQUE,
+    token_expires TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Authentication Table
-CREATE TABLE auth_sessions (
-    session_id NUMBER PRIMARY KEY,
-    player_id NUMBER NOT NULL,
-    session_token CHAR(36) NOT NULL UNIQUE,
-    expires_at TIMESTAMP NOT NULL
-);
-
--- Game Sessions Table
+-- Game Sessions Table (simplified and adjusted)
 CREATE TABLE game_sessions (
     session_id NUMBER PRIMARY KEY,
     player1_id NUMBER,
     player2_id NUMBER,
-    status VARCHAR(20) NOT NULL,
     winner_id NUMBER,
+    status VARCHAR(20) NOT NULL,
     start_time TIMESTAMP,
     end_time TIMESTAMP,
     CONSTRAINT chk_status CHECK (status IN ('waiting', 'active', 'completed'))
 );
 
--- Units Table
+-- Units Table (no changes needed, assuming it's essential for game mechanics)
 CREATE TABLE units (
     unit_id NUMBER PRIMARY KEY,
     player_id NUMBER NOT NULL,
@@ -58,70 +45,13 @@ CREATE TABLE units (
     CONSTRAINT chk_task CHECK (task IN ('idle', 'collecting', 'building', 'fighting'))
 );
 
--- Buildings Table
-CREATE TABLE buildings (
-    building_id NUMBER PRIMARY KEY,
-    player_id NUMBER NOT NULL,
-    type VARCHAR(20) NOT NULL,
-    location_x NUMBER NOT NULL,
-    location_y NUMBER NOT NULL,
-    health NUMBER NOT NULL,
-    defense_power NUMBER NOT NULL,
-    CONSTRAINT chk_bldg_type CHECK (type IN ('resource', 'defense', 'unit_factory'))
-);
-
--- Combat Logs Table
-CREATE TABLE combat_logs (
-    combat_id NUMBER PRIMARY KEY,
-    session_id NUMBER NOT NULL,
-    attacker_id NUMBER NOT NULL,
-    defender_id NUMBER NOT NULL,
-    result VARCHAR(20) NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_result CHECK (result IN ('victory', 'defeat'))
-);
-
--- Resources Table
-CREATE TABLE resources (
-    resource_id NUMBER PRIMARY KEY,
-    type VARCHAR(50) NOT NULL,
-    quantity NUMBER DEFAULT 0
-);
-
--- Player Inventories Table
-CREATE TABLE player_inventories (
-    inventory_id NUMBER PRIMARY KEY,
-    player_id NUMBER NOT NULL,
-    resource_id NUMBER NOT NULL,
-    quantity NUMBER DEFAULT 0
-);
-
--- Game Options Table
-CREATE TABLE game_options (
-    option_id NUMBER PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    value VARCHAR(255) NOT NULL
-);
-
--- Player Game Options Table
-CREATE TABLE player_game_options (
-    player_id NUMBER NOT NULL,
-    option_id NUMBER NOT NULL,
-    value VARCHAR(255) NOT NULL,
-    UNIQUE (player_id, option_id)
-);
-
 -- Add Foreign Key Constraints
-ALTER TABLE auth_sessions
-ADD CONSTRAINT fk_auth_player FOREIGN KEY (player_id) 
+ALTER TABLE game_sessions
+ADD CONSTRAINT fk_game_player1 FOREIGN KEY (player1_id) 
 REFERENCES players(player_id);
 
 ALTER TABLE game_sessions
-ADD CONSTRAINT fk_game_p1 FOREIGN KEY (player1_id) 
-REFERENCES players(player_id);
-
-ALTER TABLE game_sessions
-ADD CONSTRAINT fk_game_p2 FOREIGN KEY (player2_id) 
+ADD CONSTRAINT fk_game_player2 FOREIGN KEY (player2_id) 
 REFERENCES players(player_id);
 
 ALTER TABLE game_sessions
@@ -131,36 +61,3 @@ REFERENCES players(player_id);
 ALTER TABLE units
 ADD CONSTRAINT fk_units_player FOREIGN KEY (player_id) 
 REFERENCES players(player_id);
-
-ALTER TABLE buildings
-ADD CONSTRAINT fk_buildings_player FOREIGN KEY (player_id) 
-REFERENCES players(player_id);
-
-ALTER TABLE combat_logs
-ADD CONSTRAINT fk_combat_session FOREIGN KEY (session_id) 
-REFERENCES game_sessions(session_id);
-
-ALTER TABLE combat_logs
-ADD CONSTRAINT fk_combat_attacker FOREIGN KEY (attacker_id) 
-REFERENCES players(player_id);
-
-ALTER TABLE combat_logs
-ADD CONSTRAINT fk_combat_defender FOREIGN KEY (defender_id) 
-REFERENCES players(player_id);
-
-ALTER TABLE player_inventories
-ADD CONSTRAINT fk_inventory_player FOREIGN KEY (player_id) 
-REFERENCES players(player_id);
-
-ALTER TABLE player_inventories
-ADD CONSTRAINT fk_inventory_resource FOREIGN KEY (resource_id) 
-REFERENCES resources(resource_id);
-
-ALTER TABLE player_game_options
-ADD CONSTRAINT fk_pgo_player FOREIGN KEY (player_id) 
-REFERENCES players(player_id);
-
-ALTER TABLE player_game_options
-ADD CONSTRAINT fk_pgo_option FOREIGN KEY (option_id) 
-REFERENCES game_options(option_id);
-
