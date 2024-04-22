@@ -14,42 +14,17 @@ public class EntityData implements Serializable {
     
     public Integer x, y, width, height;
     public Integer id;
-    public String[][] options;
     public String type;
     public boolean remove;
 
-    public EntityData(int id, int x, int y, int width, int height, String[][] options, String type) {
+    public EntityData(int id, int x, int y, int width, int height, String type) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.options = options;
         this.type = type;
         this.remove = false;
-    }
-
-    public EntityData(int id, int x, int y) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.remove = false;
-    }
-
-    public EntityData(int id, String[][] options) {
-        this.id = id;
-        this.options = options.clone();
-        this.remove = false;
-    }
-
-    public EntityData(int id) {
-        this.id = id;
-        this.remove = true;
-    }
-
-    public EntityData(int id, String type) {
-        this.id = id;
-        this.type = type;
     }
 
 }

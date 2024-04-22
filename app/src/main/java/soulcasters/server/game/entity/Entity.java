@@ -9,8 +9,6 @@ public abstract class Entity {
     protected double x, y;
     protected int width, height;
     protected int id;
-    // Each option has a string identifier, and a text description that is displayed to the user.
-    protected String[][] options;
     protected boolean updateEntity;
     protected String type;
 
@@ -48,10 +46,6 @@ public abstract class Entity {
         this.y = y;
     }
 
-    public String[][] getOptions() {
-        return options.clone();
-    }
-
     public boolean isWaiting() {
         return updateEntity;
     }
@@ -65,10 +59,8 @@ public abstract class Entity {
     }
 
     public EntityData convertToEntityData() {
-        return new EntityData(id, (int)x, (int)y, width, height, getOptions(), type);
+        return new EntityData(id, (int)x, (int)y, width, height, type);
     }
-
-    public abstract void optionAction(String selectedOption);
 
     public abstract void update(double deltaTime);
 }

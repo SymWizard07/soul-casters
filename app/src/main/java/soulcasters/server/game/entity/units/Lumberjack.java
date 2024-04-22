@@ -11,8 +11,13 @@ public class Lumberjack extends Unit {
         type = "lumberjack";
 
         if (ownerId == 0) {
-            jobs.add(new Job(280, 30, "woodcutting"));
+            //jobs.add(new Job(280, 30, "woodcutting"));
         }
+
+        options = new String[][]{
+            {"chop","Chop Wood"},
+            {"return","Return to Fortress"}
+        };
     }
 
     @Override
@@ -21,8 +26,8 @@ public class Lumberjack extends Unit {
 
     @Override
     public void update(double deltaTime) {
-        System.out.println(deltaTime);
-        x += deltaTime * 5;
+        x += deltaTime * 1;
+        y += deltaTime * 1;
         updateEntity = true;
     }
     

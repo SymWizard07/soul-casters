@@ -8,7 +8,7 @@ public class TextEntity extends Entity {
 
     private int visibleTo;
     private int lifetime;
-    private long startTime;
+    private String[][] textProperties;
 
     /**
      * Creates a text entity that one or both players may see.
@@ -24,7 +24,7 @@ public class TextEntity extends Entity {
      */
     public TextEntity(EntityHandler entityHandler, double x, double y, String text, int size, Color color, int visibleTo, int lifetime) {
         super(entityHandler, x, y);
-        options = new String[][]{
+        textProperties = new String[][]{
             {"text", text},
             {"size", "" + size},
             {"color", "" + color.getRGB()}
@@ -32,22 +32,21 @@ public class TextEntity extends Entity {
         this.visibleTo = visibleTo;
         this.lifetime = lifetime;
 
-        startTime = System.currentTimeMillis();
+        type = "text";
     }
 
     public int getVisibility() {
         return visibleTo;
     }
 
-    @Override
-    public void optionAction(String selectedOption) {
-        return;
+    public String[][] getProperties() {
+        return textProperties;
     }
 
     @Override
     public void update(double deltaTime) {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - startTime >= lifetime) {
+        lifetime -= deltaTime;
+        if (lifetime <= 0.0) {
             remove();
         }
     }

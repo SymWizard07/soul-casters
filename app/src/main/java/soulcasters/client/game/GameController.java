@@ -19,7 +19,7 @@ public class GameController implements Runnable {
 
     public GameController(GamePanelControl gcp) {
         this.gcp = gcp;
-        this.entityHandler = new EntityHandler();
+        this.entityHandler = new EntityHandler(this);
     }
 
     public void run() {
@@ -105,6 +105,14 @@ public class GameController implements Runnable {
 
     public void addOptionsPanel(OptionsDisplay optionsPanel) {
         gcp.addOptionsPanel(optionsPanel);
+    }
+
+    public void removeOptionsPanel(OptionsDisplay optionsPanel) {
+        gcp.removeOptionsPanel(optionsPanel);
+    }
+
+    public void checkClick(int mouseX, int mouseY) {
+        entityHandler.checkClick(mouseX, mouseY);
     }
 
     public void start() {

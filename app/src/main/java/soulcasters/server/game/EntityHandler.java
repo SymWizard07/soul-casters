@@ -7,7 +7,7 @@ import soulcasters.shared.EntityData;
 import soulcasters.shared.OwnedEntityData;
 
 public class EntityHandler {
-    
+
     private ArrayList<Entity> entityList;
     private ArrayList<Entity> removalQueue;
     private int nextId;
@@ -61,41 +61,52 @@ public class EntityHandler {
     }
 
     public void queueEntityData(EntityData entityData) {
+        boolean dataReplaced;
         if (entityData instanceof OwnedEntityData) {
             OwnedEntityData ownedData = (OwnedEntityData) entityData;
             while (entityDataQueues.size() <= ownedData.ownerId + 1) {
                 entityDataQueues.add(new ArrayList<>());
             }
             ArrayList<EntityData> ownedDataQueue = entityDataQueues.get(ownedData.ownerId + 1);
+            dataReplaced = false;
             for (int i = 0; i < ownedDataQueue.size(); i++) {
-                if (ownedDataQueue.get(i).id == ownedData.id) {
+                if (ownedDataQueue.get(i).id == entityData.id || entityData.type == "text") {
                     ownedDataQueue.set(i, entityData);
-                    return;
+                    dataReplaced = true;
+                    break;
                 }
             }
-            ownedDataQueue.add(entityData);
-            entityDataQueues.set(ownedData.ownerId + 1, ownedDataQueue);
+            if (!dataReplaced) {
+                ownedDataQueue.add(entityData);
+                entityDataQueues.set(ownedData.ownerId + 1, ownedDataQueue);
+            }
         }
-        else {
-            ArrayList<EntityData> globalDataQueue = entityDataQueues.get(0);
-            for (int i = 0; i < globalDataQueue.size(); i++) {
-                if (globalDataQueue.get(i).id == entityData.id) {
-                    globalDataQueue.set(i, entityData);
-                    return;
-                }
+        ArrayList<EntityData> globalDataQueue = entityDataQueues.get(0);
+        dataReplaced = false;
+        for (int i = 0; i < globalDataQueue.size(); i++) {
+            if (globalDataQueue.get(i).id == entityData.id) {
+                globalDataQueue.set(i, entityData);
+                dataReplaced = true;
+                break;
             }
+        }
+        if (!dataReplaced) {
             globalDataQueue.add(entityData);
             entityDataQueues.set(0, globalDataQueue);
         }
     }
 
     /**
-     * The entities to update per player is stored as a slot in an ArrayList, with the first slot
-     * representing entities every player should update and the next slots corresponding to the player-to-update's ID
+     * The entities to update per player is stored as a slot in an ArrayList, with
+     * the first slot
+     * representing entities every player should update and the next slots
+     * corresponding to the player-to-update's ID
      * 
-     * e.x. ([Entities visible to all players][Entities player 1 can interact with][Entities player 2 can interact with])
+     * e.x. ([Entities visible to all players][Entities player 1 can interact
+     * with][Entities player 2 can interact with])
      * 
-     * The system is built on the principle of not having a set number of players, so architecture must be built this way.
+     * The system is built on the principle of not having a set number of players,
+     * so architecture must be built this way.
      */
     public ArrayList<ArrayList<EntityData>> getEntityQueues() {
         return entityDataQueues;

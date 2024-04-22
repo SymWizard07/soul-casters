@@ -1,12 +1,10 @@
 package soulcasters.client.game;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 public class OptionsDisplay extends JPanel {
@@ -34,6 +32,7 @@ public class OptionsDisplay extends JPanel {
 
         Color panelColor = new Color(48, 42, 53);
         setBackground(panelColor);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         Border buttonBorder = BorderFactory.createLineBorder(new Color(75, 70, 85), 2);
 
@@ -45,30 +44,43 @@ public class OptionsDisplay extends JPanel {
                 optionButton.setBorder(buttonBorder);
                 optionButton.setFocusPainted(false);
                 optionButton.setOpaque(true);
+                optionButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the button
+                optionButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
     
                 optionButton.addActionListener(new OptionIndexListener(i));
-    
-                entityHandler.addOptionsPanel(this);
+
+                add(optionButton);
             }
         }
+        entityHandler.addOptionsPanel(this);
     }
 
     private void sendSelectedOption(int optionIndex) {
         entityHandler.sendSelectedOption(entityId, optionIndex);
     }
 
+    public void removePanel() {
+        entityHandler.removeOptionsPanel(this);
+    }
+
     public String[][] getOptions() {
         return options;
     }
 
-    public void renderPanel(int x, int y) {
+    public void showUpdatedPanel(int x, int y) {
         if (x < 0) {
             x += 200;
         }
         if (y < 0) {
             y += 30 * options.length * 2;
         }
-        setBounds(x, y, 100, 30 * options.length);
+        setBounds(x, y, 200, 30 * options.length);
+        setVisible(true);
+        revalidate();
+    }
+
+    public void hidePanel() {
+        setVisible(false);
     }
 
 }

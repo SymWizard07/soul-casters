@@ -18,7 +18,12 @@ public class GameController implements Runnable {
 
     public GameController(GameServer gs) {
         this.gs = gs;
-        entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 0));
+        entityHandler.addEntity(new Lumberjack(entityHandler, 100, 0, 0));
+        entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 1));
+    }
+
+    private void setupEntities() {
+        //entityHandler.addEntity(new );
     }
 
     public int getPlayerCount() {

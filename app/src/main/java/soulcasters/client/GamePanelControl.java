@@ -1,8 +1,11 @@
 package soulcasters.client;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
+import java.awt.BorderLayout;
 import java.io.IOException;
+import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
@@ -16,6 +19,7 @@ public class GamePanelControl extends MouseAdapter {
 
     // Private data fields for the container and chat client.
     private JPanel container;
+    private GamePanel gamePanel;
     private ChatClient client;
     private GameController gc;
     private Long sessionToken;
@@ -27,6 +31,10 @@ public class GamePanelControl extends MouseAdapter {
 
         gc = new GameController(this);
         gc.start();
+    }
+
+    public void setGamePanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
     }
 
     public void sendSelectedOption(int entityId, int optionIndex) {
@@ -59,11 +67,19 @@ public class GamePanelControl extends MouseAdapter {
     }
 
     public void addOptionsPanel(OptionsDisplay optionsPanel) {
-        container.add(optionsPanel);
+        gamePanel.addOptionsPanel(optionsPanel);
+    }
+
+    public void removeOptionsPanel(OptionsDisplay optionsPanel) {
+        gamePanel.removeOptionsPanel(optionsPanel);
     }
 
     public void setSessionToken(long sessionToken) {
         this.sessionToken = sessionToken;
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        gc.checkClick(e.getX(), e.getY());
     }
 
     public void render(Graphics2D g) {
