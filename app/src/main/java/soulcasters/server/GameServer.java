@@ -115,7 +115,13 @@ public class GameServer extends AbstractServer {
     }
 
     if (arg0 instanceof SelectedOptionData) {
-      
+      SelectedOptionData selectedOptionData = (SelectedOptionData) arg0;
+      for (SessionToken sessionToken : sessionTokens) {
+        // Validate client ID and the sent session token
+        if (sessionToken.networkId == arg1.getId() && sessionToken.sessionToken == selectedOptionData.sessionToken) {
+          sessionToken.game.recieveSelectedOption(selectedOptionData.entityId, selectedOptionData.selectedOption);
+        }
+      }
     }
 
     // If we received LoginData, verify the account information and send session token if successful.

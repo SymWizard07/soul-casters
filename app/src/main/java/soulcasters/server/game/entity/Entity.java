@@ -25,6 +25,10 @@ public abstract class Entity {
         this.id = id;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public double getX() {
         return x;
     }

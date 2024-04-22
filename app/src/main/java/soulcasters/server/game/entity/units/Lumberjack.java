@@ -6,8 +6,8 @@ public class Lumberjack extends Unit {
 
     public Lumberjack(EntityHandler entityHandler, double x, double y, int ownerId) {
         super(entityHandler, x, y, ownerId);
-        width = 32;
-        height = 32;
+        width = 16;
+        height = 16;
         type = "lumberjack";
 
         if (ownerId == 0) {

@@ -3,6 +3,7 @@ package soulcasters.server.game;
 import java.util.ArrayList;
 
 import soulcasters.server.game.entity.Entity;
+import soulcasters.server.game.entity.OwnedEntity;
 import soulcasters.shared.EntityData;
 import soulcasters.shared.OwnedEntityData;
 
@@ -45,6 +46,15 @@ public class EntityHandler {
         }
 
         return entityResults;
+    }
+
+    public void recieveSelectedOption(int entityId, String selectedOption) {
+        for (int i = 0; i < entityList.size(); i++) {
+            Entity nextEntity = entityList.get(i);
+            if (entityId == nextEntity.getId() && nextEntity instanceof OwnedEntity) {
+                ((OwnedEntity)nextEntity).optionAction(selectedOption);
+            }
+        }
     }
 
     public void update(double deltaTime) {

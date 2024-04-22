@@ -15,14 +15,15 @@ public class OptionsDisplay extends JPanel {
     private boolean isText;
 
     private class OptionIndexListener implements ActionListener {
-        private int optionIndex;
+        private String selectedOption;
 
-        public OptionIndexListener(int optionIndex) {
-            this.optionIndex = optionIndex;
+        public OptionIndexListener(String selectedOption) {
+            this.selectedOption = selectedOption;
         }
 
         public void actionPerformed(ActionEvent e) {
-            sendSelectedOption(optionIndex);
+            sendSelectedOption(selectedOption);
+            hidePanel();
         }
     }
 
@@ -50,7 +51,7 @@ public class OptionsDisplay extends JPanel {
                     optionButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the button
                     optionButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
-                    optionButton.addActionListener(new OptionIndexListener(i));
+                    optionButton.addActionListener(new OptionIndexListener(options[i][0]));
 
                     add(optionButton);
                 }
@@ -86,8 +87,8 @@ public class OptionsDisplay extends JPanel {
         entityHandler.addOptionsPanel(this);
     }
 
-    private void sendSelectedOption(int optionIndex) {
-        entityHandler.sendSelectedOption(entityId, optionIndex);
+    private void sendSelectedOption(String selectedOption) {
+        entityHandler.sendSelectedOption(entityId, selectedOption);
     }
 
     public void removePanel() {

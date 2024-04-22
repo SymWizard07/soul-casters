@@ -59,8 +59,10 @@ public class EntityHandler {
     }
 
     public void checkClick(int mouseX, int mouseY) {
-        for (EntityDisplay entityDisplay : entityList) {
-            entityDisplay.checkClick(mouseX, mouseY);
+        for (int i = entityList.size() - 1; i >= 0; i--) {
+            if (entityList.get(i).checkClick(mouseX, mouseY)) {
+                return;
+            }
         }
     }
 
@@ -81,8 +83,8 @@ public class EntityHandler {
         gc.removeOptionsPanel(optionsPanel);
     }
 
-    public void sendSelectedOption(int entityId, int optionIndex) {
-        gc.sendSelectedOption(entityId, optionIndex);
+    public void sendSelectedOption(int entityId, String selectedOption) {
+        gc.sendSelectedOption(entityId, selectedOption);
     }
 
     public void render(Graphics2D g, int offsetX, int offsetY, double scale) {

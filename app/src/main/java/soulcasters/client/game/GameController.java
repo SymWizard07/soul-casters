@@ -128,7 +128,7 @@ public class GameController implements Runnable {
         entityHandler.updateList(combinedEntityData);
     }
 
-    public void sendSelectedOption(int entityId, int optionIndex) {
-        gcp.sendSelectedOption(entityId, optionIndex);
+    public void sendSelectedOption(int entityId, String selectedOption) {
+        gcp.sendSelectedOption(entityId, selectedOption);
     }
 }

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import soulcasters.server.GameServer;
+import soulcasters.server.game.entity.Portal;
 import soulcasters.server.game.entity.TextEntity;
 import soulcasters.server.game.entity.units.Lumberjack;
 import soulcasters.shared.CombinedEntityData;
@@ -20,13 +21,15 @@ public class GameController implements Runnable {
 
     public GameController(GameServer gs) {
         this.gs = gs;
-        entityHandler.addEntity(new Lumberjack(entityHandler, 100, 0, 0));
-        entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 1));
-        entityHandler.addEntity(new TextEntity(entityHandler, 160, 20, "Test", 24, Color.RED, -1, -1));
+
+        setupEntities();
     }
 
     private void setupEntities() {
-        //entityHandler.addEntity(new );
+        entityHandler.addEntity(new Lumberjack(entityHandler, 100, 0, 0));
+        entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 1));
+        entityHandler.addEntity(new TextEntity(entityHandler, 160, 20, "Test", 24, Color.RED, -1, -1));
+        entityHandler.addEntity(new Portal(entityHandler, 30, 100, 0));
     }
 
     public int getPlayerCount() {
@@ -83,6 +86,10 @@ public class GameController implements Runnable {
         }
 
         return null;
+    }
+
+    public void recieveSelectedOption(int entityId, String selectedOption) {
+        entityHandler.recieveSelectedOption(entityId, selectedOption);
     }
 
     public void run() {

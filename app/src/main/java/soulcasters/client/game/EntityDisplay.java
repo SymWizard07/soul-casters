@@ -22,7 +22,7 @@ public class EntityDisplay {
     private double scale;
     private OptionsDisplay options;
     private boolean showOptions;
-    private boolean isClicked;
+    private boolean isMenu;
     private Image sprite, resizedSprite;
 
     public EntityDisplay(EntityHandler entityHandler, int id, String type, int virtualX, int virtualY, int width, int height) {
@@ -33,8 +33,8 @@ public class EntityDisplay {
         this.virtualY = virtualY;
         this.width = width;
         this.height = height;
-        isClicked = false;
         showOptions = false;
+        isMenu = false;
 
         if (!type.equals("text")) {
             loadSprite();
@@ -53,16 +53,22 @@ public class EntityDisplay {
         sprite = new ImageIcon(imgURL).getImage();
     }
 
-    public void checkClick(int mouseX, int mouseY) {
+    public boolean checkClick(int mouseX, int mouseY) {
         if (this.options == null || type.equals("text")) {
-            return;
+            return false;
         }
         if (mouseX > screenX && mouseX < screenX + width * scale && mouseY > screenY && mouseY < screenY + height * scale) {
             showOptions = true;
+            return true;
         }
         else {
+            showOptions = false;
             options.hidePanel();
+            if (isMenu) {
+                entityHandler.sendSelectedOption(id, "back");
+            }
         }
+        return false;
     }
 
     public int getId() {
@@ -104,6 +110,21 @@ public class EntityDisplay {
     }
 
     public void setOptions(String[][] options) {
+        showOptions = false;
+        isMenu = false;
+        if (options.length >= 1 && options[0][0].equals("properties")) {
+            for (String property : options[0]) {
+                if (property.equals("isMenu")) {
+                    isMenu = true;
+                    showOptions = true;
+                }
+            }
+            String[][] newOptions = new String[options.length - 1][2];
+            for (int i = 1; i < options.length; i++) {
+                newOptions[i - 1] = options[i];
+            }
+            options = newOptions;
+        }
         if (this.options != null && options != null && Arrays.deepEquals(this.options.getOptions(), options)) {
             return;
         }
@@ -124,12 +145,15 @@ public class EntityDisplay {
         if (sprite != null) {
             resizedSprite = Constants.resizeImage(sprite, (int)(width * scale), (int)(width * scale));
             g.drawImage(resizedSprite, screenX, screenY, null);
+            if (options != null) {
+                g.setColor(Color.WHITE);
+                g.drawRect(screenX, screenY, (int)(width * scale), (int)(height * scale));
+            }
         }
 
         if (options != null && showOptions) {
             if (!type.equals("text")) {
                 options.showUpdatedPanel(screenX, screenY);
-                showOptions = false;
             }
             else {
                 options.showUpdatedPanel(screenX, screenY);

@@ -37,12 +37,12 @@ public class GamePanelControl extends MouseAdapter {
         this.gamePanel = gamePanel;
     }
 
-    public void sendSelectedOption(int entityId, int optionIndex) {
+    public void sendSelectedOption(int entityId, String selectedOption) {
         if (sessionToken == null) {
             return;
         }
         try {
-            client.sendToServer(new SelectedOptionData(sessionToken, entityId, optionIndex));
+            client.sendToServer(new SelectedOptionData(sessionToken, entityId, selectedOption));
         } catch (IOException e) {
             e.printStackTrace();
         }

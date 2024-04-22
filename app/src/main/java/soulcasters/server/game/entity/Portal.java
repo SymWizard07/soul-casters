@@ -6,24 +6,37 @@ import soulcasters.Constants;
 import soulcasters.server.game.EntityHandler;
 import soulcasters.server.game.entity.units.Lumberjack;
 
-public class SoulCaster extends OwnedEntity {
+public class Portal extends OwnedEntity {
 
     private boolean repeatCast = false;
 
-    public SoulCaster(EntityHandler entityHandler, int x, int y, int ownerId) {
+    public Portal(EntityHandler entityHandler, int x, int y, int ownerId) {
         super(entityHandler, x, y, ownerId);
         options = new String[][]{
             {"workerCasts", "SoulCast Worker"},
             {"fighterCasts", "SoulCast Fighter"},
-            {"toggleRepeat", "Toggle Repeat Cast\nAttempts to continuously cast the next chosen unit.\nOnly works when you have the resources!"}
+            {"toggleRepeat", "Toggle Repeat Cast"}
         };
+        
+        width = 32;
+        height = 32;
+        type = "portal";
     }
 
     @Override
     public void optionAction(String selectedOption) {
+        updateEntity = true;
         switch (selectedOption) {
+            case "back":
+            options = new String[][]{
+                {"workerCasts", "SoulCast Worker"},
+                {"fighterCasts", "SoulCast Fighter"},
+                {"toggleRepeat", "Toggle Repeat Cast"}
+            };
+            break;
             case "workerCasts":
             options = new String[][]{
+                {"properties", "isMenu"},
                 {"lumberjack", "Cast Lumberjack - 10 SP"},
                 {"miner", "Cast Miner - 15 SP"},
                 {"extractor", "Cast Clay Extractor - 15 SP"},
@@ -33,6 +46,7 @@ public class SoulCaster extends OwnedEntity {
             break;
             case "fighterCasts":
             options = new String[][]{
+                {"properties", "isMenu"},
                 {"scout", "Cast Scout - 5 SP"},
                 {"defender", "Cast Defender - 20 SP"},
                 {"knight", "Cast Knight - 15 SP"},
@@ -56,11 +70,6 @@ public class SoulCaster extends OwnedEntity {
     }
 
     public String[][] getOptions() {
-        options = new String[][]{
-            {"workerCasts", "SoulCast Worker"},
-            {"fighterCasts", "SoulCast Fighter"},
-            {"toggleRepeat", "Toggle Repeat Cast\nAttempts to continuously cast the next chosen unit.\nOnly works when you have the resources!"}
-        };
 
         return options;
     }
