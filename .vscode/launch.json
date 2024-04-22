@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ClientGUITest",
+            "request": "launch",
+            "mainClass": "ClientGUITest",
+            "projectName": "app"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

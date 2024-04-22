@@ -1,9 +1,11 @@
 
 package soulcasters.server.game;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import soulcasters.server.GameServer;
+import soulcasters.server.game.entity.TextEntity;
 import soulcasters.server.game.entity.units.Lumberjack;
 import soulcasters.shared.CombinedEntityData;
 import soulcasters.shared.EntityData;
@@ -20,6 +22,7 @@ public class GameController implements Runnable {
         this.gs = gs;
         entityHandler.addEntity(new Lumberjack(entityHandler, 100, 0, 0));
         entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 1));
+        entityHandler.addEntity(new TextEntity(entityHandler, 160, 20, "Test", 24, Color.RED, -1, -1));
     }
 
     private void setupEntities() {

@@ -115,7 +115,7 @@ public class GameServer extends AbstractServer {
     }
 
     if (arg0 instanceof SelectedOptionData) {
-      System.out.println(arg0);
+      
     }
 
     // If we received LoginData, verify the account information and send session token if successful.

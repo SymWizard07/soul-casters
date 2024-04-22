@@ -38,6 +38,9 @@ public class EntityHandler {
                 if (entityData.remove) {
                     removalList.add(entityDisplay);
                 }
+                if (entityData.type.equals("text")) {
+                    entityDisplay.setOptions(((OwnedEntityData)entityData).options);
+                }
             }
             if (!entityExists) {
                 addEntity(new EntityDisplay(this, entityData.id, entityData.type, entityData.x, entityData.y, entityData.width, entityData.height));

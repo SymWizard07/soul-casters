@@ -8,8 +8,9 @@ public class PlayerData {
     
     public int id;
     public long networkId;
-    public int score;
     public String username;
+    public int score;
+    public int wood, ore, clay;
     public ArrayList<EntityData> entityDataQueue;
 
     public PlayerData(int id, long networkId, String username) {

@@ -36,7 +36,12 @@ public class EntityDisplay {
         isClicked = false;
         showOptions = false;
 
-        loadSprite();
+        if (!type.equals("text")) {
+            loadSprite();
+        }
+        else {
+            showOptions = true;
+        }
     }
 
     private void loadSprite() {
@@ -49,7 +54,7 @@ public class EntityDisplay {
     }
 
     public void checkClick(int mouseX, int mouseY) {
-        if (this.options == null) {
+        if (this.options == null || type.equals("text")) {
             return;
         }
         if (mouseX > screenX && mouseX < screenX + width * scale && mouseY > screenY && mouseY < screenY + height * scale) {
@@ -108,7 +113,7 @@ public class EntityDisplay {
         if (this.options != null) {
             this.options.removePanel();
         }
-        this.options = new OptionsDisplay(entityHandler, options, id);
+        this.options = new OptionsDisplay(entityHandler, options, id, type.equals("text"));
     }
 
     public void render(Graphics2D g, int offsetX, int offsetY, double scale) {
@@ -122,8 +127,13 @@ public class EntityDisplay {
         }
 
         if (options != null && showOptions) {
-            options.showUpdatedPanel((int)(virtualX * scale - scale * 40), (int)(virtualY * scale));
-            showOptions = false;
+            if (!type.equals("text")) {
+                options.showUpdatedPanel(screenX, screenY);
+                showOptions = false;
+            }
+            else {
+                options.showUpdatedPanel(screenX, screenY);
+            }
         }
     }
 }

@@ -64,13 +64,34 @@ public class EntityHandler {
         boolean dataReplaced;
         if (entityData instanceof OwnedEntityData) {
             OwnedEntityData ownedData = (OwnedEntityData) entityData;
+
+            if (ownedData.type.equals("text")) {
+                for (int i = ownedData.ownerId + 1; i < entityDataQueues.size(); i++) {
+                    dataReplaced = false;
+                    for (int j = 0; j < entityDataQueues.get(i).size(); j++) {
+                        if (entityDataQueues.get(i).get(j).id == entityData.id) {
+                            entityDataQueues.get(i).set(j, entityData);
+                            dataReplaced = true;
+                        }
+                    }
+                    if (!dataReplaced) {
+                        entityDataQueues.get(i).add(entityData);
+                    }
+                    if (i == 0) {
+                        break;
+                    }
+                }
+
+                return;
+            }
+
             while (entityDataQueues.size() <= ownedData.ownerId + 1) {
                 entityDataQueues.add(new ArrayList<>());
             }
             ArrayList<EntityData> ownedDataQueue = entityDataQueues.get(ownedData.ownerId + 1);
             dataReplaced = false;
             for (int i = 0; i < ownedDataQueue.size(); i++) {
-                if (ownedDataQueue.get(i).id == entityData.id || entityData.type == "text") {
+                if (ownedDataQueue.get(i).id == entityData.id) {
                     ownedDataQueue.set(i, entityData);
                     dataReplaced = true;
                     break;
