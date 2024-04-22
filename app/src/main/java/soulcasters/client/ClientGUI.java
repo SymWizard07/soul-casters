@@ -17,16 +17,6 @@ public class ClientGUI extends JFrame
    ChatClient client = new ChatClient();
     client.setHost("localhost");
     client.setPort(8300);
-    try
-    {
-      client.openConnection();
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    
-    
     
     // Set the title and default close operation.
     this.setTitle("Chat Client");
