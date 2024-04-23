@@ -1,3 +1,5 @@
+Install this project using Gradle if possible for best management.
+
 Start the Server.jar file if hosting the game.
 Start the Client.jar file and enter the host's IP to connect in the GUI.
 
