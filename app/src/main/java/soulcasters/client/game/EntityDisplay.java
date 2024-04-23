@@ -12,16 +12,16 @@ import soulcasters.Constants;
 public class EntityDisplay {
 
     private EntityHandler entityHandler;
-    private int id;
-    private String type;
-    private int screenX, screenY;
-    private int virtualX, virtualY;
-    private int width, height;
-    private double scale;
-    private OptionsDisplay options;
-    private boolean showOptions;
-    private boolean isMenu;
-    private Image sprite, resizedSprite;
+    public int id;
+    public String type;
+    public int screenX, screenY;
+    public int virtualX, virtualY;
+    public int width, height;
+    public double scale;
+    public OptionsDisplay options;
+    public boolean showOptions;
+    public boolean isMenu;
+    public Image sprite, resizedSprite;
 
     public EntityDisplay(EntityHandler entityHandler, int id, String type, int virtualX, int virtualY, int width, int height) {
         this.entityHandler = entityHandler;

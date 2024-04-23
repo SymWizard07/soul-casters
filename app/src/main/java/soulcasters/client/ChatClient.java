@@ -41,7 +41,6 @@ public class ChatClient extends AbstractClient
 
     if (arg0 instanceof CombinedEntityData) {
       CombinedEntityData combinedEntityData = (CombinedEntityData) arg0;
-      System.out.println(combinedEntityData.visibleEntities.size());
       
       gamePanelControl.recieveCombinedEntityData(combinedEntityData);
     }

@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS User;
+
+CREATE TABLE User (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    user_password VARBINARY(16) NOT NULL
+);
