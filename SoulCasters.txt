@@ -1,0 +1,63 @@
+DROP TABLE players CASCADE CONSTRAINTS;
+DROP TABLE game_sessions CASCADE CONSTRAINTS;
+DROP TABLE units CASCADE CONSTRAINTS;
+
+-- Players Table (combined player info and authentication details)
+CREATE TABLE players (
+    player_id NUMBER PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    score NUMBER DEFAULT 0,
+    games_won NUMBER DEFAULT 0,
+    games_lost NUMBER DEFAULT 0,
+    resources NUMBER DEFAULT 0,
+    session_token CHAR(36) NOT NULL UNIQUE,
+    token_expires TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Game Sessions Table (simplified and adjusted)
+CREATE TABLE game_sessions (
+    session_id NUMBER PRIMARY KEY,
+    player1_id NUMBER,
+    player2_id NUMBER,
+    winner_id NUMBER,
+    status VARCHAR(20) NOT NULL,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
+    CONSTRAINT chk_status CHECK (status IN ('waiting', 'active', 'completed'))
+);
+
+-- Units Table (no changes needed, assuming it's essential for game mechanics)
+CREATE TABLE units (
+    unit_id NUMBER PRIMARY KEY,
+    player_id NUMBER NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    task VARCHAR(20) NOT NULL,
+    location_x NUMBER NOT NULL,
+    location_y NUMBER NOT NULL,
+    health NUMBER NOT NULL,
+    attack_power NUMBER,
+    defense_power NUMBER,
+    resource_capacity NUMBER,
+    CONSTRAINT chk_type CHECK (type IN ('worker', 'soldier', 'defender')),
+    CONSTRAINT chk_task CHECK (task IN ('idle', 'collecting', 'building', 'fighting'))
+);
+
+-- Add Foreign Key Constraints
+ALTER TABLE game_sessions
+ADD CONSTRAINT fk_game_player1 FOREIGN KEY (player1_id) 
+REFERENCES players(player_id);
+
+ALTER TABLE game_sessions
+ADD CONSTRAINT fk_game_player2 FOREIGN KEY (player2_id) 
+REFERENCES players(player_id);
+
+ALTER TABLE game_sessions
+ADD CONSTRAINT fk_game_winner FOREIGN KEY (winner_id) 
+REFERENCES players(player_id);
+
+ALTER TABLE units
+ADD CONSTRAINT fk_units_player FOREIGN KEY (player_id) 
+REFERENCES players(player_id);
