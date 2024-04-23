@@ -14,7 +14,7 @@ plugins {
 jar {
     manifest {
         attributes(
-            'Main-Class': 'soulcasters.client.ClientGUI'
+            'Main-Class': 'soulcasters.server.ServerGUI'
         )
     }
     from {
