@@ -3,8 +3,10 @@ package soulcasters.client.game;
 
 import java.awt.Graphics2D;
 
+import soulcasters.Constants;
 import soulcasters.client.GamePanelControl;
 import soulcasters.shared.CombinedEntityData;
+import java.awt.*;
 
 public class GameController implements Runnable {
 
@@ -15,7 +17,7 @@ public class GameController implements Runnable {
 
     public GameController(GamePanelControl gcp) {
         this.gcp = gcp;
-        this.entityHandler = new EntityHandler();
+        this.entityHandler = new EntityHandler(this);
     }
 
     public void run() {
@@ -24,7 +26,6 @@ public class GameController implements Runnable {
 
         long lastTime = System.nanoTime();
         long now;
-        long updateTime;
         long wait;
         long requestTime = 0;
         long requestNow;
@@ -32,7 +33,6 @@ public class GameController implements Runnable {
 
         while (running) {
             now = System.nanoTime();
-            updateTime = now - lastTime;
             lastTime = now;
 
             gcp.repaintPanel(); // Call Panel repaint to render graphics
@@ -40,7 +40,8 @@ public class GameController implements Runnable {
             requestNow = System.currentTimeMillis();
             requestTime += requestNow - requestLast;
             requestLast = requestNow;
-            if (requestTime > 1000) {
+            // EntityData requested every 200 ms
+            if (requestTime > 200) {
                 gcp.requestEntityData();
                 requestTime = 0;
             }
@@ -60,11 +61,53 @@ public class GameController implements Runnable {
     }
 
     public void render(Graphics2D g) {
-        entityHandler.render(g);
+        Rectangle clipBounds = g.getClipBounds();
+
+        // Calculate the current aspect ratio
+        double currentAspectRatio = (double) clipBounds.width / clipBounds.height;
+
+        // Desired aspect ratio is 16:10, which is 1.6
+        double desiredAspectRatio = Constants.ASPECT_RATIO;
+
+        int newWidth, newHeight;
+        int x, y;
+
+        if (currentAspectRatio > desiredAspectRatio) {
+            // Too wide
+            newHeight = clipBounds.height;
+            newWidth = (int) (newHeight * desiredAspectRatio);
+            x = (clipBounds.width - newWidth) / 2;
+            y = 0;
+        } else {
+            // Too tall
+            newWidth = clipBounds.width;
+            newHeight = (int) (newWidth / desiredAspectRatio);
+            x = 0;
+            y = (clipBounds.height - newHeight) / 2;
+        }
+
+        g.setColor(new Color(121, 217, 84));
+        g.fillRect(x, y, newWidth, newHeight);
+        entityHandler.render(g, x, y, (double)(newWidth) / Constants.GAME_WIDTH);
+
+        // Fill the background with black bars
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, clipBounds.width, y); // Top bar
+        g.fillRect(0, y + newHeight, clipBounds.width, clipBounds.height - (y + newHeight)); // Bottom bar
+        g.fillRect(0, 0, x, clipBounds.height); // Left bar
+        g.fillRect(x + newWidth, 0, clipBounds.width - (x + newWidth), clipBounds.height); // Right bar
     }
 
     public void addOptionsPanel(OptionsDisplay optionsPanel) {
         gcp.addOptionsPanel(optionsPanel);
+    }
+
+    public void removeOptionsPanel(OptionsDisplay optionsPanel) {
+        gcp.removeOptionsPanel(optionsPanel);
+    }
+
+    public void checkClick(int mouseX, int mouseY) {
+        entityHandler.checkClick(mouseX, mouseY);
     }
 
     public void start() {
@@ -80,7 +123,11 @@ public class GameController implements Runnable {
         entityHandler.updateList(combinedEntityData);
     }
 
-    public void sendSelectedOption(int entityId, int optionIndex) {
-        gcp.sendSelectedOption(entityId, optionIndex);
+    public void sendSelectedOption(int entityId, String selectedOption) {
+        gcp.sendSelectedOption(entityId, selectedOption);
+    }
+
+    public void setPlayerId(int playerId) {
+        entityHandler.setPlayerId(playerId);
     }
 }

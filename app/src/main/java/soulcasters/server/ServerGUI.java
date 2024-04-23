@@ -29,7 +29,7 @@ public class ServerGUI extends JFrame
     int i = 0;
     
     // Set the title and default close operation.
-    this.setTitle("SoulCasters Server GUI");
+    this.setTitle("Portals Server GUI");
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     // Create the status label.

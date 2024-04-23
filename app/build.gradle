@@ -11,6 +11,18 @@ plugins {
     id 'application'
 }
 
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'soulcasters.server.ServerGUI'
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()

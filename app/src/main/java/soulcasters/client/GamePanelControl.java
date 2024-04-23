@@ -3,6 +3,7 @@ package soulcasters.client;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.io.IOException;
+import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
@@ -16,6 +17,7 @@ public class GamePanelControl extends MouseAdapter {
 
     // Private data fields for the container and chat client.
     private JPanel container;
+    private GamePanel gamePanel;
     private ChatClient client;
     private GameController gc;
     private Long sessionToken;
@@ -29,12 +31,16 @@ public class GamePanelControl extends MouseAdapter {
         gc.start();
     }
 
-    public void sendSelectedOption(int entityId, int optionIndex) {
+    public void setGamePanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
+
+    public void sendSelectedOption(int entityId, String selectedOption) {
         if (sessionToken == null) {
             return;
         }
         try {
-            client.sendToServer(new SelectedOptionData(sessionToken, entityId, optionIndex));
+            client.sendToServer(new SelectedOptionData(sessionToken, entityId, selectedOption));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,7 +53,6 @@ public class GamePanelControl extends MouseAdapter {
         try {
             if (client.inGame) {
                 client.sendToServer(new DataRequest(sessionToken, "reqEntityData"));
-                System.out.println("request sent");
             }
         } catch (IOException e) {
             System.out.println("Could not request entity data");
@@ -56,16 +61,24 @@ public class GamePanelControl extends MouseAdapter {
     }
 
     public void recieveCombinedEntityData(CombinedEntityData combinedEntityData) {
-        System.out.println("Entity data recieved");
         gc.updateEntityData(combinedEntityData);
     }
 
     public void addOptionsPanel(OptionsDisplay optionsPanel) {
-        container.add(optionsPanel);
+        gamePanel.addOptionsPanel(optionsPanel);
     }
 
-    public void setSessionToken(long sessionToken) {
+    public void removeOptionsPanel(OptionsDisplay optionsPanel) {
+        gamePanel.removeOptionsPanel(optionsPanel);
+    }
+
+    public void setSessionData(long sessionToken, int playerId) {
         this.sessionToken = sessionToken;
+        gc.setPlayerId(playerId);
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        gc.checkClick(e.getX(), e.getY());
     }
 
     public void render(Graphics2D g) {

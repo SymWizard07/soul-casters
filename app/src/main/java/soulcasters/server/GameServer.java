@@ -5,13 +5,11 @@ import javax.swing.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 import soulcasters.server.game.GameController;
-import soulcasters.server.game.PlayerData;
 import soulcasters.shared.*;
 
 public class GameServer extends AbstractServer {
@@ -103,7 +101,6 @@ public class GameServer extends AbstractServer {
           // Check request type, retrieve available data for client
           if (dataReq.request.equals("reqEntityData")) {
             CombinedEntityData ced = sessionToken.game.retrieveEntityData(arg1.getId());
-            System.out.println(ced);
             try {
               arg1.sendToClient(ced);
             } catch (IOException e) {
@@ -116,12 +113,19 @@ public class GameServer extends AbstractServer {
     }
 
     if (arg0 instanceof SelectedOptionData) {
-
+      SelectedOptionData selectedOptionData = (SelectedOptionData) arg0;
+      for (SessionToken sessionToken : sessionTokens) {
+        // Validate client ID and the sent session token
+        if (sessionToken.networkId == arg1.getId() && sessionToken.sessionToken == selectedOptionData.sessionToken) {
+          sessionToken.game.recieveSelectedOption(selectedOptionData.entityId, selectedOptionData.selectedOption);
+        }
+      }
     }
 
     // If we received LoginData, verify the account information and send session token if successful.
     if (arg0 instanceof LoginData) {
       Long newToken = null;
+      Integer newPlayerId = null;
       // Check the username and password with the database.
       LoginData data = (LoginData) arg0;
       if (database.verifyAccount(data.getUsername(), data.getPassword())) {
@@ -131,7 +135,7 @@ public class GameServer extends AbstractServer {
 
         for (GameController game : concurrentGames) {
           if (game.getPlayerCount() == 1) {
-            game.addPlayer(arg1.getId(), data.getUsername());
+            newPlayerId = game.addPlayer(arg1.getId(), data.getUsername());
             playerAdded = true;
             newToken = createSessionToken(arg1.getId(), game);
           }
@@ -140,7 +144,8 @@ public class GameServer extends AbstractServer {
         if (!playerAdded) {
           GameController newGame = new GameController(this);
           concurrentGames.add(newGame);
-          newGame.addPlayer(arg1.getId(), data.getUsername());
+          newPlayerId = newGame.addPlayer(arg1.getId(), data.getUsername());
+          newGame.start();
           newToken = createSessionToken(arg1.getId(), newGame);
         }
       } else {
@@ -150,7 +155,7 @@ public class GameServer extends AbstractServer {
       // Send Session Token to client
       try {
         if (newToken != null) {
-          arg1.sendToClient(new ClientToken(newToken));
+          arg1.sendToClient(new ClientToken(newToken, newPlayerId));
           log.append("Client " + arg1.getId() + " given token: " + newToken);
         }
         else {

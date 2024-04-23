@@ -77,9 +77,6 @@ public class CreateAccountControl implements ActionListener
   // After an account is created, set the User object and display the contacts screen.
   public void createAccountSuccess()
   {
-    CreateAccountPanel createAccountPanel = (CreateAccountPanel)container.getComponent(2);
-    ClientGUI clientGUI = (ClientGUI)SwingUtilities.getWindowAncestor(createAccountPanel);
-    //clientGUI.setUser(new User(createAccountPanel.getUsername(), createAccountPanel.getPassword()));
     CardLayout cardLayout = (CardLayout)container.getLayout();
     cardLayout.show(container, "2");
   }

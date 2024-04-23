@@ -1,24 +1,63 @@
 
 package soulcasters.server.game;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
+import soulcasters.Constants;
 import soulcasters.server.GameServer;
-import soulcasters.server.game.entity.Lumberjack;
+import soulcasters.server.game.entity.*;
+import soulcasters.server.game.entity.units.*;
 import soulcasters.shared.CombinedEntityData;
 import soulcasters.shared.EntityData;
 
 public class GameController implements Runnable {
 
-    private GameServer gs;
     private boolean running = true;
-    private EntityHandler entityHandler = new EntityHandler();
-
-    private PlayerData[] players = new PlayerData[2];
+    private PlayerData[] players;
+    private EntityHandler entityHandler;
+    private TextEntity timerText;
+    private double gameTimer;
+    private TextEntity scoreText;
 
     public GameController(GameServer gs) {
-        this.gs = gs;
-        entityHandler.addEntity(new Lumberjack(entityHandler, 0, 0, 1));
+        players = new PlayerData[2];
+        entityHandler = new EntityHandler(players);
+        gameTimer = 480.0;
+        setupEntities();
+    }
+
+    private void setupEntities() {
+
+        // Portals and Walls
+        entityHandler.addEntity(new Wall(entityHandler, -90, -40, 0));
+        entityHandler.addEntity(new Portal(entityHandler, 20, 54, 0));
+        entityHandler.addEntity(new Wall(entityHandler, 154, -40, 1));
+        entityHandler.addEntity(new Portal(entityHandler, 276, 54, 1));
+
+        // Trees
+        for (int i = 64; i < 236; i += 16) {
+            entityHandler.addEntity(
+                    new Tree(entityHandler, i + (int) (Math.random() * 10) - 5, (int) (Math.random() * 20) + 5));
+        }
+
+        // Ponds
+        for (int i = 40; i < 280; i += 40) {
+            entityHandler.addEntity(new Pond(entityHandler, i + (int) (Math.random() * 10) - 5,
+                    200 - ((int) (Math.random() * 20) + 30)));
+        }
+
+        // Starting Units
+        entityHandler.addEntity(new Lumberjack(entityHandler, 40, 68, 0));
+        entityHandler.addEntity(new Extractor(entityHandler, 40, 116, 0));
+        entityHandler.addEntity(new Lumberjack(entityHandler, 264, 68, 1));
+        entityHandler.addEntity(new Extractor(entityHandler, 264, 116, 1));
+
+        timerText = new TextEntity(entityHandler, 140, 20, "", 42, Color.BLACK, -1, -1);
+        entityHandler.addEntity(timerText);
+
+        scoreText = new TextEntity(entityHandler, 140, 30, "", 42, Color.BLACK, -1, -1);
+        entityHandler.addEntity(scoreText);
     }
 
     public int getPlayerCount() {
@@ -34,28 +73,29 @@ public class GameController implements Runnable {
         return playerCount;
     }
 
-    public boolean addPlayer(long networkId, String username) {
+    public int addPlayer(long networkId, String username) {
         for (int i = 0; i < players.length; i++) {
             if (players[i] == null) {
                 players[i] = new PlayerData(i, networkId, username);
-                return true;
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
     /**
-     * Returns the combined entity data of all visible entities, plus the specific player's
+     * Returns the combined entity data of all visible entities, plus the specific
+     * player's
      * interactable entities and their options.
      * 
      * @param networkId
      * @return An Array containing 2 ArrayLists of EntityData to update clientside.
      */
     public CombinedEntityData retrieveEntityData(long networkId) {
-        
+
         ArrayList<ArrayList<EntityData>> dataQueues = entityHandler.getEntityQueues();
-        
+
         for (int i = 0; i < players.length; i++) {
             if (players[i].networkId == networkId) {
                 if (dataQueues == null) {
@@ -67,9 +107,10 @@ public class GameController implements Runnable {
                 } catch (Exception e) {
                     try {
                         combinedEntityData = new CombinedEntityData(dataQueues.get(0), null);
-                    } catch (Exception e2) {}
+                    } catch (Exception e2) {
+                    }
                 }
-                
+
                 return combinedEntityData;
             }
         }
@@ -77,24 +118,35 @@ public class GameController implements Runnable {
         return null;
     }
 
+    public void recieveSelectedOption(int entityId, String selectedOption) {
+        entityHandler.recieveSelectedOption(entityId, selectedOption);
+    }
+
     public void run() {
-        final int FPS = 60;
+        final int FPS = 30;
         final long frameTime = 1000 / FPS;
 
         long lastTime = System.nanoTime();
         long now;
-        long updateTime;
-        long wait;
+        double deltaTime;
 
         while (running) {
             now = System.nanoTime();
-            updateTime = now - lastTime;
+            deltaTime = (now - lastTime) / 1000000000.0; // Convert nanoseconds to seconds
             lastTime = now;
 
-            update(); // Update game state
-            render(); // Render to the screen
+            if (players[0] != null && players[1] != null) {
+                gameTimer -= deltaTime;
+                scoreText.setText(players[0].score + ":" + players[1].score);
+            } 
+            else {
+                scoreText.setText("Waiting on another Player...");
+            }
+            timerText.setText(Constants.formatTime((int) (gameTimer)));
 
-            wait = (lastTime - System.nanoTime() + frameTime) / 1000000;
+            update(deltaTime);
+
+            long wait = (lastTime - System.nanoTime() + frameTime) / 1000000;
 
             if (wait < 0) {
                 wait = 5;
@@ -108,12 +160,8 @@ public class GameController implements Runnable {
         }
     }
 
-    private void update() {
-        entityHandler.update();
-    }
-
-    private void render() {
-
+    private void update(double deltaTime) {
+        entityHandler.update(deltaTime);
     }
 
     public void start() {

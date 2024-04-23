@@ -4,11 +4,10 @@ import java.awt.Color;
 
 import soulcasters.server.game.EntityHandler;
 
-public class TextEntity extends Entity {
+public class TextEntity extends OwnedEntity {
 
     private int visibleTo;
-    private int lifetime;
-    private long startTime;
+    private double lifetime;
 
     /**
      * Creates a text entity that one or both players may see.
@@ -22,8 +21,8 @@ public class TextEntity extends Entity {
      * @param visibleTo An int signifying the id of the players the text is visible to. 0 for player 1, 1 for player 2, -1 for both players.
      * @param lifetime Total time in milliseconds text is on screen before disappearing. -1 to last forever, or until the entity is removed.
      */
-    public TextEntity(EntityHandler entityHandler, int x, int y, String text, int size, Color color, int visibleTo, int lifetime) {
-        super(entityHandler, x, y);
+    public TextEntity(EntityHandler entityHandler, double x, double y, String text, int size, Color color, int visibleTo, double lifetime) {
+        super(entityHandler, x, y, visibleTo);
         options = new String[][]{
             {"text", text},
             {"size", "" + size},
@@ -32,23 +31,26 @@ public class TextEntity extends Entity {
         this.visibleTo = visibleTo;
         this.lifetime = lifetime;
 
-        startTime = System.currentTimeMillis();
+        type = "text";
     }
 
     public int getVisibility() {
         return visibleTo;
     }
 
-    @Override
-    public void optionAction(String selectedOption) {
-        return;
+    public void setText(String text) {
+        options[0][1] = text;
     }
 
     @Override
-    public void update() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - startTime >= lifetime) {
+    public void update(double deltaTime) {
+        lifetime -= deltaTime;
+        if (lifetime <= 0.0 && lifetime >= -1.0) {
             remove();
         }
+    }
+
+    @Override
+    public void optionAction(String selectedOption) {
     }
 }

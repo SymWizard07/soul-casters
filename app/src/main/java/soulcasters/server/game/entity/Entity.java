@@ -6,15 +6,13 @@ import soulcasters.shared.EntityData;
 public abstract class Entity {
 
     protected EntityHandler entityHandler;
-    protected int x, y;
+    protected double x, y;
     protected int width, height;
     protected int id;
-    // Each option has a string identifier, and a text description that is displayed to the user.
-    protected String[][] options;
     protected boolean updateEntity;
     protected String type;
 
-    public Entity(EntityHandler entityHandler, int x, int y) {
+    public Entity(EntityHandler entityHandler, double x, double y) {
         this.entityHandler = entityHandler;
         this.x = x;
         this.y = y;
@@ -27,11 +25,15 @@ public abstract class Entity {
         this.id = id;
     }
 
-    public int getX() {
+    public int getId() {
+        return id;
+    }
+
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -43,17 +45,21 @@ public abstract class Entity {
         return height;
     }
 
-    public void setPosition(int x, int y) {
+    public String getType() {
+        return type;
+    }
+
+    public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public String[][] getOptions() {
-        return options.clone();
-    }
-
     public boolean isWaiting() {
         return updateEntity;
+    }
+
+    public void stopWaiting() {
+        updateEntity = false;
     }
 
     public void remove() {
@@ -61,10 +67,8 @@ public abstract class Entity {
     }
 
     public EntityData convertToEntityData() {
-        return new EntityData(id, x, y, width, height, getOptions(), type);
+        return new EntityData(id, (int)x, (int)y, width, height, type);
     }
 
-    public abstract void optionAction(String selectedOption);
-
-    public abstract void update();
+    public abstract void update(double deltaTime);
 }
