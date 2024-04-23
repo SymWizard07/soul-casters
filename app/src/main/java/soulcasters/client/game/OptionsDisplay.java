@@ -16,18 +16,23 @@ public class OptionsDisplay extends JPanel {
 
     private class OptionIndexListener implements ActionListener {
         private String selectedOption;
+        private boolean isMenu;
 
-        public OptionIndexListener(String selectedOption) {
+        public OptionIndexListener(String selectedOption, boolean isMenu) {
             this.selectedOption = selectedOption;
+            this.isMenu = isMenu;
         }
 
         public void actionPerformed(ActionEvent e) {
             sendSelectedOption(selectedOption);
+            if (isMenu) {
+                sendSelectedOption("back");
+            }
             hidePanel();
         }
     }
 
-    public OptionsDisplay(EntityHandler entityHandler, String[][] options, int entityId, boolean isText) {
+    public OptionsDisplay(EntityHandler entityHandler, String[][] options, int entityId, boolean isText, boolean isMenu) {
         this.entityHandler = entityHandler;
         this.options = options;
         this.entityId = entityId;
@@ -51,7 +56,7 @@ public class OptionsDisplay extends JPanel {
                     optionButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the button
                     optionButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
-                    optionButton.addActionListener(new OptionIndexListener(options[i][0]));
+                    optionButton.addActionListener(new OptionIndexListener(options[i][0], isMenu));
 
                     add(optionButton);
                 }

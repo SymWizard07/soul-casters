@@ -8,8 +8,6 @@ import javax.swing.JPanel;
 
 import soulcasters.client.game.OptionsDisplay;
 
-import javax.swing.JLabel;
-
 public class GamePanel extends JPanel {
 
     private GamePanelControl gpc;

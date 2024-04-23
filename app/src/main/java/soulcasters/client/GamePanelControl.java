@@ -1,9 +1,7 @@
 package soulcasters.client;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
-import java.awt.BorderLayout;
 import java.io.IOException;
 import java.awt.event.MouseEvent;
 
@@ -74,8 +72,9 @@ public class GamePanelControl extends MouseAdapter {
         gamePanel.removeOptionsPanel(optionsPanel);
     }
 
-    public void setSessionToken(long sessionToken) {
+    public void setSessionData(long sessionToken, int playerId) {
         this.sessionToken = sessionToken;
+        gc.setPlayerId(playerId);
     }
 
     public void mouseClicked(MouseEvent e) {

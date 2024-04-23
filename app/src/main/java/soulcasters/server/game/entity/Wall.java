@@ -4,18 +4,30 @@ import soulcasters.server.game.EntityHandler;
 
 public class Wall extends OwnedEntity {
 
+    private int integrity;
+
     public Wall(EntityHandler entityHandler, double x, double y, int ownerId) {
         super(entityHandler, x, y, ownerId);
-    }
+        integrity = 100;
+        this.ownerId = ownerId;
 
-    @Override
-    public void optionAction(String selectedOption) {
+        width = 256;
+        height = 256;
+        if (ownerId == 0) {
+            type = "wall1";
+        }
+        if (ownerId == 1) {
+            type = "wall2";
+        }
     }
 
     @Override
     public void update(double deltaTime) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        
+    }
+
+    @Override
+    public void optionAction(String selectedOption) {
     }
     
 }

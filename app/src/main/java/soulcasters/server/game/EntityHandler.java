@@ -7,19 +7,23 @@ import soulcasters.server.game.entity.OwnedEntity;
 import soulcasters.shared.EntityData;
 import soulcasters.shared.OwnedEntityData;
 
+import java.awt.geom.Point2D;
+
 public class EntityHandler {
 
     private ArrayList<Entity> entityList;
     private ArrayList<Entity> removalQueue;
     private int nextId;
     private ArrayList<ArrayList<EntityData>> entityDataQueues;
+    private PlayerData[] ownerData;
 
-    public EntityHandler() {
+    public EntityHandler(PlayerData[] ownerData) {
         entityList = new ArrayList<>();
         removalQueue = new ArrayList<>();
         nextId = 0;
         entityDataQueues = new ArrayList<>();
         entityDataQueues.add(new ArrayList<>());
+        this.ownerData = ownerData;
     }
 
     public void addEntity(Entity entity) {
@@ -30,22 +34,47 @@ public class EntityHandler {
 
     public void removeEntity(Entity entity) {
         removalQueue.add(entity);
+        removeEntityData(entity.convertToEntityData());
     }
 
     public Entity getEntity(int index) {
         return entityList.get(index);
     }
 
-    public ArrayList<Entity> getEntityByType(Class<?> type) {
+    public ArrayList<Entity> getEntityByType(String type) {
         ArrayList<Entity> entityResults = new ArrayList<>();
 
         for (Entity entity : entityList) {
-            if (type.isInstance(entity)) {
+            if (entity.getType().equals(type)) {
                 entityResults.add(entity);
             }
         }
 
         return entityResults;
+    }
+
+    public Entity getNearestEntity(double x, double y, String type) {
+        Entity nearestEntity = null;
+        double smallestDistance = Double.MAX_VALUE;
+        Point2D start = new Point2D.Double(x, y);
+        for (Entity entity : entityList) {
+            if (!entity.getType().equals(type)) {
+                continue;
+            }
+            Point2D end = new Point2D.Double(entity.getX(), entity.getY());
+            if (smallestDistance > start.distance(end)) {
+                smallestDistance = start.distance(end);
+                nearestEntity = entity;
+            }
+        }
+        return nearestEntity;
+    }
+
+    public PlayerData getOwnerData(int ownerId) {
+        if (ownerData[ownerId] != null) {
+            return ownerData[ownerId];
+        }
+        return null;
     }
 
     public void recieveSelectedOption(int entityId, String selectedOption) {
@@ -124,6 +153,24 @@ public class EntityHandler {
         if (!dataReplaced) {
             globalDataQueue.add(entityData);
             entityDataQueues.set(0, globalDataQueue);
+        }
+    }
+
+    public void removeEntityData(EntityData removedEntityData) {
+        ArrayList<EntityData> removalList = null;
+        EntityData removalData = null;
+
+        for (ArrayList<EntityData> arrayList : entityDataQueues) {
+            for (EntityData entityData : arrayList) {
+                if (entityData != null && removedEntityData.id == entityData.id) {
+                    removalList = arrayList;
+                    removalData = entityData;
+                }
+            }
+        }
+
+        if (removalList != null && removalData != null) {
+            removalList.remove(removalData);
         }
     }
 

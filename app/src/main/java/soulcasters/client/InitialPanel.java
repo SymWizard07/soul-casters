@@ -1,9 +1,6 @@
 package soulcasters.client;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.*;
 
 public class InitialPanel extends JPanel {

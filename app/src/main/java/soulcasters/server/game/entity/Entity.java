@@ -45,6 +45,10 @@ public abstract class Entity {
         return height;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;

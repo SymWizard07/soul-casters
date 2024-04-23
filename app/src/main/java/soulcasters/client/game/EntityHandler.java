@@ -2,10 +2,6 @@ package soulcasters.client.game;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.*;
-
-import java.awt.Rectangle;
-
 import soulcasters.shared.CombinedEntityData;
 import soulcasters.shared.EntityData;
 import soulcasters.shared.OwnedEntityData;
@@ -14,6 +10,7 @@ public class EntityHandler {
 
     private GameController gc;
     private ArrayList<EntityDisplay> entityList;
+    private int playerId;
 
     public EntityHandler(GameController gc) {
         entityList = new ArrayList<>();
@@ -21,7 +18,7 @@ public class EntityHandler {
     }
 
     public void updateList(CombinedEntityData combinedEntityData) {
-        ArrayList<EntityDisplay> removalList = new ArrayList<>();
+        ArrayList<EntityDisplay> safeList = new ArrayList<>();
         boolean entityExists;
 
         for (EntityData entityData : combinedEntityData.visibleEntities) {
@@ -35,23 +32,33 @@ public class EntityHandler {
                     entityDisplay.setSize(entityData.width, entityData.height);
                 if (entityData.type != null)
                     entityDisplay.setType(entityData.type);
-                if (entityData.remove) {
-                    removalList.add(entityDisplay);
-                }
                 if (entityData.type.equals("text")) {
                     entityDisplay.setOptions(((OwnedEntityData)entityData).options);
                 }
+                safeList.add(entityDisplay);
             }
             if (!entityExists) {
-                addEntity(new EntityDisplay(this, entityData.id, entityData.type, entityData.x, entityData.y, entityData.width, entityData.height));
+                EntityDisplay newDisplay = new EntityDisplay(this, entityData.id, entityData.type, entityData.x, entityData.y, entityData.width, entityData.height);
+                if (entityData instanceof OwnedEntityData) {
+                    if (((OwnedEntityData)entityData).ownerId == 0 && !((OwnedEntityData)entityData).type.equals("text")) {
+                        newDisplay.flipSprite();
+                    }
+                }
+                addEntity(newDisplay);
+                safeList.add(newDisplay);
             }
         }
-        for (EntityData entityData : combinedEntityData.interactableEntities) {
-            EntityDisplay entityDisplay = getEntityDisplay(entityData.id);
-            if (entityDisplay != null) {
-                entityDisplay.setOptions(((OwnedEntityData)entityData).options);
+        if (combinedEntityData.interactableEntities != null) {
+            for (EntityData entityData : combinedEntityData.interactableEntities) {
+                EntityDisplay entityDisplay = getEntityDisplay(entityData.id);
+                if (entityDisplay != null) {
+                    entityDisplay.setOptions(((OwnedEntityData)entityData).options);
+                    safeList.add(entityDisplay);
+                }
             }
         }
+
+        entityList = safeList;
     }
 
     private void addEntity(EntityDisplay entityDisplay) {
@@ -92,5 +99,13 @@ public class EntityHandler {
         for (int i = 0; i < fixedSize; i++) {
             entityList.get(i).render(g, offsetX, offsetY, scale);
         }
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
+    public int getPlayerId() {
+        return playerId;
     }
 }

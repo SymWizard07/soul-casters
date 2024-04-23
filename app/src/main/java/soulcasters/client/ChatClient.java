@@ -32,6 +32,7 @@ public class ChatClient extends AbstractClient
   {
     super("localhost", 8300);
     inGame = false;
+    
   }
   
   // Method that handles messages from the server.
@@ -40,6 +41,7 @@ public class ChatClient extends AbstractClient
 
     if (arg0 instanceof CombinedEntityData) {
       CombinedEntityData combinedEntityData = (CombinedEntityData) arg0;
+      System.out.println(combinedEntityData.visibleEntities.size());
       
       gamePanelControl.recieveCombinedEntityData(combinedEntityData);
     }
@@ -49,7 +51,7 @@ public class ChatClient extends AbstractClient
       ClientToken clientToken = (ClientToken) arg0;
 
       System.out.println("Session Token: " + clientToken.sessionToken);
-      gamePanelControl.setSessionToken(clientToken.sessionToken);
+      gamePanelControl.setSessionData(clientToken.sessionToken, clientToken.playerId);
       loginControl.loginSuccess();
       inGame = true;
     }

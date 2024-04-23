@@ -20,6 +20,9 @@ public abstract class OwnedEntity extends Entity {
     }
 
     public String[][] getOptions() {
+        if (options == null) {
+            return null;
+        }
         return options.clone();
     }
 

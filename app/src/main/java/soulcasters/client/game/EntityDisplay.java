@@ -3,8 +3,6 @@ package soulcasters.client.game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
-
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
@@ -71,6 +69,13 @@ public class EntityDisplay {
         return false;
     }
 
+    public void flipSprite() {
+        if (type.equals("text")) {
+            return;
+        }
+        sprite = Constants.flipImage(sprite);
+    }
+
     public int getId() {
         return id;
     }
@@ -110,6 +115,9 @@ public class EntityDisplay {
     }
 
     public void setOptions(String[][] options) {
+        if (options == null) {
+            return;
+        }
         showOptions = false;
         isMenu = false;
         if (options.length >= 1 && options[0][0].equals("properties")) {
@@ -134,7 +142,7 @@ public class EntityDisplay {
         if (this.options != null) {
             this.options.removePanel();
         }
-        this.options = new OptionsDisplay(entityHandler, options, id, type.equals("text"));
+        this.options = new OptionsDisplay(entityHandler, options, id, type.equals("text"), isMenu);
     }
 
     public void render(Graphics2D g, int offsetX, int offsetY, double scale) {
@@ -151,11 +159,11 @@ public class EntityDisplay {
             }
         }
 
-        if (options != null && showOptions) {
-            if (!type.equals("text")) {
+        if (options != null) {
+            if (type.equals("text")) {
                 options.showUpdatedPanel(screenX, screenY);
             }
-            else {
+            else if (showOptions) {
                 options.showUpdatedPanel(screenX, screenY);
             }
         }

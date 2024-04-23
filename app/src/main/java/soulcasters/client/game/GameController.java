@@ -6,8 +6,6 @@ import java.awt.Graphics2D;
 import soulcasters.Constants;
 import soulcasters.client.GamePanelControl;
 import soulcasters.shared.CombinedEntityData;
-import javax.swing.*;
-
 import java.awt.*;
 
 public class GameController implements Runnable {
@@ -28,7 +26,6 @@ public class GameController implements Runnable {
 
         long lastTime = System.nanoTime();
         long now;
-        long updateTime;
         long wait;
         long requestTime = 0;
         long requestNow;
@@ -36,7 +33,6 @@ public class GameController implements Runnable {
 
         while (running) {
             now = System.nanoTime();
-            updateTime = now - lastTime;
             lastTime = now;
 
             gcp.repaintPanel(); // Call Panel repaint to render graphics
@@ -44,8 +40,8 @@ public class GameController implements Runnable {
             requestNow = System.currentTimeMillis();
             requestTime += requestNow - requestLast;
             requestLast = requestNow;
-            // EntityData requested every 40 ms
-            if (requestTime > 40) {
+            // EntityData requested every 200 ms
+            if (requestTime > 200) {
                 gcp.requestEntityData();
                 requestTime = 0;
             }
@@ -90,17 +86,16 @@ public class GameController implements Runnable {
             y = (clipBounds.height - newHeight) / 2;
         }
 
+        g.setColor(new Color(121, 217, 84));
+        g.fillRect(x, y, newWidth, newHeight);
+        entityHandler.render(g, x, y, (double)(newWidth) / Constants.GAME_WIDTH);
+
         // Fill the background with black bars
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, clipBounds.width, y); // Top bar
         g.fillRect(0, y + newHeight, clipBounds.width, clipBounds.height - (y + newHeight)); // Bottom bar
         g.fillRect(0, 0, x, clipBounds.height); // Left bar
         g.fillRect(x + newWidth, 0, clipBounds.width - (x + newWidth), clipBounds.height); // Right bar
-
-        // Now draw the actual content in the adjusted area
-        g.setColor(new Color(101, 197, 64));
-        g.fillRect(x, y, newWidth, newHeight);
-        entityHandler.render(g, x, y, (double)(newWidth) / Constants.GAME_WIDTH);
     }
 
     public void addOptionsPanel(OptionsDisplay optionsPanel) {
@@ -130,5 +125,9 @@ public class GameController implements Runnable {
 
     public void sendSelectedOption(int entityId, String selectedOption) {
         gcp.sendSelectedOption(entityId, selectedOption);
+    }
+
+    public void setPlayerId(int playerId) {
+        entityHandler.setPlayerId(playerId);
     }
 }
